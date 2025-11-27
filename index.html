@@ -3,10 +3,595 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>OLA - Customer Complaint Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background: #000;
+            color: white;
+            padding: 24px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #d1d5db;
+            margin-top: 4px;
+        }
+
+        .main-content {
+            padding: 32px 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            padding: 32px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        textarea {
+            resize: none;
+            height: 128px;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #000;
+        }
+
+        .rating-value {
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #000;
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover {
+            background: #374151;
+            transform: scale(0.98);
+        }
+
+        .complaints-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            background: #000;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .complaints-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 0;
+            color: #9ca3af;
+        }
+
+        .complaint-card {
+            border: 2px solid #f3f4f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .complaint-card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .customer-info h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .customer-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .complaint-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        .complaint-description {
+            font-size: 14px;
+            color: #374151;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .complaint-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+            margin-bottom: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-processing {
+            background: #3b82f6;
+        }
+
+        .btn-processing:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .btn-resolved {
+            background: #10b981;
+        }
+
+        .btn-resolved:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .color-red { color: #ef4444; }
+        .color-yellow { color: #f59e0b; }
+        .color-green { color: #10b981; }
+    </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a sample HTML document.</p>
-</body>
-</html>
+    <header>
+        <div class="container">
+            <h1>OLA</h1>
+            <p class="subtitle">Customer Complaint Management System</p>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <div class="grid">
+            <!-- Complaint Form -->
+            <div class="card">
+                <div class="card-header">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    <h2 class="card-title">Submit Complaint</h2>
+                </div>
+
+                <div class="form-group">
+                    <label>Customer Name *</label>
+                    <input type="text" id="customerName" placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="email" placeholder="your.email@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX">
+                </div>
+
+                <div class="form-group">
+                    <label>Complaint Type</label>
+                    <select id="complaintType">
+                        <option value="ride-issue">Ride Issue</option>
+                        <option value="driver-behavior">Driver Behavior</option>
+                        <option value="payment">Payment Problem</option>
+                        <option value="safety">Safety Concern</option>
+                        <option value="app-issue">App Technical Issue</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Customer Satisfaction Rating</label>
+                    <div class="range-container">
+                        <input type="range" id="satisfaction" min="1" max="5" value="3">
+                        <span id="ratingValue" class="rating-value color-yellow">3/5</span>
+                    </div>
+                    <div class="range-labels">
+                        <span>Very Poor</span>
+                        <span>Excellent</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Complaint Details *</label>
+                    <textarea id="description" placeholder="Please describe your complaint in detail..."></textarea>
+                </div>
+
+                <button class="submit-btn" onclick="submitComplaint()">Submit Complaint</button>
+            </div>
+
+            <!-- Complaints List -->
+            <div class="card">
+                <div class="complaints-header">
+                    <h2 class="card-title">Recent Complaints</h2>
+                    <span class="badge" id="totalCount">0 Total</span>
+                </div>
+
+                <div class="complaints-list" id="complaintsList">
+                    <div class="empty-state">
+                        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin: 0 auto 16px; opacity: 0.5;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p style="font-size: 18px;">No complaints submitted yet</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Submit your first complaint using the form</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <svg class="stat-icon color-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="stat-number" id="pendingCount">0</h3>
+                <p class="stat-label">Pending</p>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon" style="color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <h3 class="stat-number" id="processingCount">0</h3>
+                <p class="stat-label">Processing</p>
+            </div>
+            <div class="stat-card">
+                <svg class="stat-icon color-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="stat-number" id="resolvedCount">0</h3>
+                <p class="stat-label">Resolved</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let complaints = [];
+
+        // Update satisfaction rating display
+        document.getElementById('satisfaction').addEventListener('input', function() {
+            const value = this.value;
+            const ratingValue = document.getElementById('ratingValue');
+            ratingValue.textContent = value + '/5';
+            
+            if (value <= 2) {
+                ratingValue.className = 'rating-value color-red';
+            } else if (value <= 3) {
+                ratingValue.className = 'rating-value color-yellow';
+            } else {
+                ratingValue.className = 'rating-value color-green';
+            }
+        });
+
+        function submitComplaint() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const complaintType = document.getElementById('complaintType').value;
+            const satisfaction = document.getElementById('satisfaction').value;
+            const description = document.getElementById('description').value.trim();
+
+            if (!customerName || !email || !phone || !description) {
+                alert('Please fill in all required fields!');
+                return;
+            }
+
+            const complaint = {
+                id: Date.now(),
+                customerName,
+                email,
+                phone,
+                complaintType,
+                satisfaction,
+                description,
+                status: 'pending',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString()
+            };
+
+            complaints.unshift(complaint);
+            renderComplaints();
+            updateStats();
+
+            // Reset form
+            document.getElementById('customerName').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('complaintType').value = 'ride-issue';
+            document.getElementById('satisfaction').value = '3';
+            document.getElementById('ratingValue').textContent = '3/5';
+            document.getElementById('ratingValue').className = 'rating-value color-yellow';
+            document.getElementById('description').value = '';
+
+            alert('Complaint submitted successfully!');
+        }
+
+        function renderComplaints() {
+            const list = document.getElementById('complaintsList');
+            
+            if (complaints.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin: 0 auto 16px; opacity: 0.5;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p style="font-size: 18px;">No complaints submitted yet</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Submit your first complaint using the form</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = complaints.map(c => {
+                const statusClass = `status-${c.status}`;
+                const ratingColor = c.satisfaction <= 2 ? 'color-red' : c.satisfaction <= 3 ? 'color-yellow' : 'color-green';
+                const disabled = c.status === 'resolved' ? 'disabled' : '';
+                
+                return `
+                    <div class="complaint-card">
+                        <div class="complaint-header">
+                            <div class="customer-info">
+                                <h3>${c.customerName}</h3>
+                                <p>${c.email}</p>
+                                <p>${c.phone}</p>
+                            </div>
+                            <span class="status-badge ${statusClass}">${c.status.toUpperCase()}</span>
+                        </div>
+                        <div class="complaint-type">${c.complaintType.replace('-', ' ')}</div>
+                        <p class="complaint-description">${c.description}</p>
+                        <div class="complaint-meta">
+                            <span>${c.date} at ${c.time}</span>
+                            <span class="${ratingColor}" style="font-weight: bold;">Rating: ${c.satisfaction}/5</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-processing" onclick="updateStatus(${c.id}, 'processing')" ${disabled}>
+                                Processing
+                            </button>
+                            <button class="btn btn-resolved" onclick="updateStatus(${c.id}, 'resolved')" ${disabled}>
+                                Resolved
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStatus(id, newStatus) {
+            complaints = complaints.map(c => 
+                c.id === id ? {...c, status: newStatus} : c
+            );
+            renderComplaints();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = complaints.length + ' Total';
+            document.getElementById('pendingCount').textContent = complaints.filter(c => c.status === 'pending').length;
+            document.getElementById('processingCount').textContent = complaints.filter(c => c.status === 'processing').length;
+            document.getElementById('resolvedCount').textContent = complaints.filter(c => c.status === 'resolved').length;
+        }
+    </script>
+        </script>
+
+        <footer>
+            <div class="container" style="padding: 24px 16px; text-align: center; color: #6b7280;">
+                <p>&copy; 2025 OLA — Customer Complaint Management</p>
+            </div>
+        </footer>
+    </body>
+    </html>
